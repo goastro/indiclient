@@ -26,8 +26,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/rickbassham/logging"
-	"github.com/satori/go.uuid"
 	"github.com/spf13/afero"
 )
 
@@ -269,7 +269,7 @@ func (c *INDIClient) GetBlobStream(deviceName, propName, blobName string) (rdr i
 		return
 	}
 
-	guid, _ := uuid.NewV4()
+	guid := uuid.New()
 	id = guid.String()
 
 	key := fmt.Sprintf("%s_%s_%s", deviceName, propName, blobName)
