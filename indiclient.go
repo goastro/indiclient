@@ -187,10 +187,12 @@ func (c *INDIClient) Disconnect() error {
 
 	if c.read != nil {
 		close(c.read)
+		c.read = nil
 	}
 
 	if c.write != nil {
 		close(c.write)
+		c.write = nil
 	}
 
 	return err
@@ -1137,6 +1139,11 @@ func (c *INDIClient) startRead() {
 		for {
 			t, err := decoder.Token()
 			if err != nil {
+				if strings.Contains(err.Error(), "use of closed network connection") {
+					// We've disconnected.
+					return
+				}
+
 				log.WithError(err).Warn("error in decoder.Token")
 
 				if err == io.EOF {
