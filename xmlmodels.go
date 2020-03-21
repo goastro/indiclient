@@ -4,16 +4,16 @@ import (
 	"encoding/xml"
 )
 
-type getProperties struct {
+type GetProperties struct {
 	XMLName xml.Name `xml:"getProperties"`
 	Version string   `xml:"version,attr"`
 	Device  string   `xml:"device,attr,omitempty"`
 	Name    string   `xml:"name,attr,omitempty"`
 }
 
-// defTextVector
+// DefTextVector
 // Define a property that holds one or more text elements.
-type defTextVector struct {
+type DefTextVector struct {
 	XMLName   xml.Name           `xml:"defTextVector"`
 	Device    string             `xml:"device,attr"`
 	Name      string             `xml:"name,attr"`
@@ -24,21 +24,21 @@ type defTextVector struct {
 	Timeout   int                `xml:"timeout,attr"`
 	Timestamp string             `xml:"timestamp,attr"`
 	Message   string             `xml:"message"`
-	Texts     []defText          `xml:"defText"`
+	Texts     []DefText          `xml:"defText"`
 }
 
-// defText
+// DefText
 // Define one member of a text vector.
-type defText struct {
+type DefText struct {
 	XMLName xml.Name `xml:"defText"`
 	Name    string   `xml:"name,attr"`
 	Label   string   `xml:"label,attr"`
 	Value   string   `xml:",chardata"`
 }
 
-// defNumberVector
+// DefNumberVector
 // Define a property that holds one or more numeric values.
-type defNumberVector struct {
+type DefNumberVector struct {
 	XMLName   xml.Name           `xml:"defNumberVector"`
 	Device    string             `xml:"device,attr"`
 	Name      string             `xml:"name,attr"`
@@ -49,12 +49,12 @@ type defNumberVector struct {
 	Timeout   int                `xml:"timeout,attr"`
 	Timestamp string             `xml:"timestamp,attr"`
 	Message   string             `xml:"message"`
-	Numbers   []defNumber        `xml:"defNumber"`
+	Numbers   []DefNumber        `xml:"defNumber"`
 }
 
-// defNumber
+// DefNumber
 // Define one member of a number vector.
-type defNumber struct {
+type DefNumber struct {
 	XMLName xml.Name `xml:"defNumber"`
 	Name    string   `xml:"name,attr"`
 	Label   string   `xml:"label,attr"`
@@ -65,10 +65,10 @@ type defNumber struct {
 	Value   string   `xml:",chardata"`
 }
 
-// defSwitchVector
+// DefSwitchVector
 // Define a collection of switches. Rule is only a hint for use by a GUI to decide a suitable
 // presentation style. Rules are actually implemented wholly within the Device.
-type defSwitchVector struct {
+type DefSwitchVector struct {
 	XMLName   xml.Name           `xml:"defSwitchVector"`
 	Device    string             `xml:"device,attr"`
 	Name      string             `xml:"name,attr"`
@@ -80,21 +80,21 @@ type defSwitchVector struct {
 	Timeout   int                `xml:"timeout,attr"`
 	Timestamp string             `xml:"timestamp,attr"`
 	Message   string             `xml:"message"`
-	Switches  []defSwitch        `xml:"defSwitch"`
+	Switches  []DefSwitch        `xml:"defSwitch"`
 }
 
-// defSwitch
+// DefSwitch
 // Define one member of a switch vector.
-type defSwitch struct {
+type DefSwitch struct {
 	XMLName xml.Name    `xml:"defSwitch"`
 	Name    string      `xml:"name,attr"`
 	Label   string      `xml:"label,attr"`
 	Value   SwitchState `xml:",chardata"`
 }
 
-// defLightVector
+// DefLightVector
 // Define a collection of passive indicator lights.
-type defLightVector struct {
+type DefLightVector struct {
 	XMLName   xml.Name      `xml:"defLightVector"`
 	Device    string        `xml:"device,attr"`
 	Name      string        `xml:"name,attr"`
@@ -103,21 +103,21 @@ type defLightVector struct {
 	State     PropertyState `xml:"state,attr"`
 	Timestamp string        `xml:"timestamp,attr"`
 	Message   string        `xml:"message"`
-	Lights    []defLight    `xml:"defLight"`
+	Lights    []DefLight    `xml:"defLight"`
 }
 
-// defLight
+// DefLight
 // Define one member of a light vector.
-type defLight struct {
+type DefLight struct {
 	XMLName xml.Name      `xml:"defLight"`
 	Name    string        `xml:"name,attr"`
 	Label   string        `xml:"label,attr"`
 	Value   PropertyState `xml:",chardata"`
 }
 
-// defBlobVector
+// DefBlobVector
 // Define a property that holds one or more Binary Large Objects, BLOBs.
-type defBlobVector struct {
+type DefBlobVector struct {
 	XMLName   xml.Name           `xml:"defBLOBVector"`
 	Device    string             `xml:"device,attr"`
 	Name      string             `xml:"name,attr"`
@@ -128,102 +128,102 @@ type defBlobVector struct {
 	Timeout   int                `xml:"timeout,attr"`
 	Timestamp string             `xml:"timestamp,attr"`
 	Message   string             `xml:"message"`
-	Blobs     []defBlob          `xml:"defBLOB"`
+	Blobs     []DefBlob          `xml:"defBLOB"`
 }
 
-// defBlob
+// DefBlob
 // Define one member of a BLOB vector. Unlike other defXXX elements, this does not contain an
 // initial value for the BLOB.
-type defBlob struct {
+type DefBlob struct {
 	XMLName xml.Name `xml:"defBLOB"`
 	Name    string   `xml:"name,attr"`
 	Label   string   `xml:"label,attr"`
 }
 
-// enableBlob
+// EnableBlob
 // Command to control whether setBLOBs should be sent to this channel from a given Device. They can
 // be turned off completely by setting Never (the default), allowed to be intermixed with other INDI
 // commands by setting Also or made the only command by setting Only.
-type enableBlob struct {
+type EnableBlob struct {
 	XMLName xml.Name   `xml:"enableBLOB"`
 	Device  string     `xml:"device,attr"`
 	Name    string     `xml:"name,attr"`
 	Value   BlobEnable `xml:",chardata"`
 }
 
-// newTextVector
+// NewTextVector
 // Commands to inform Device of new target values for a Property. After sending, the Client must set
 // its local state for the Property to Busy, leaving it up to the Device to change it when it sees
 // fit.
-type newTextVector struct {
+type NewTextVector struct {
 	XMLName   xml.Name  `xml:"newTextVector"`
 	Device    string    `xml:"device,attr"`
 	Name      string    `xml:"name,attr"`
 	Timestamp string    `xml:"timestamp,attr,omitempty"`
-	Texts     []oneText `xml:"oneText"`
+	Texts     []OneText `xml:"oneText"`
 }
 
-// newNumberVector
+// NewNumberVector
 // Commands to inform Device of new target values for a Property. After sending, the Client must set
 // its local state for the Property to Busy, leaving it up to the Device to change it when it sees
 // fit.
-type newNumberVector struct {
+type NewNumberVector struct {
 	XMLName   xml.Name    `xml:"newNumberVector"`
 	Device    string      `xml:"device,attr"`
 	Name      string      `xml:"name,attr"`
 	Timestamp string      `xml:"timestamp,attr,omitempty"`
-	Numbers   []oneNumber `xml:"oneNumber"`
+	Numbers   []OneNumber `xml:"oneNumber"`
 }
 
-// newSwitchVector
+// NewSwitchVector
 // Commands to inform Device of new target values for a Property. After sending, the Client must set
 // its local state for the Property to Busy, leaving it up to the Device to change it when it sees
 // fit.
-type newSwitchVector struct {
+type NewSwitchVector struct {
 	XMLName   xml.Name    `xml:"newSwitchVector"`
 	Device    string      `xml:"device,attr"`
 	Name      string      `xml:"name,attr"`
 	Timestamp string      `xml:"timestamp,attr,omitempty"`
-	Switches  []oneSwitch `xml:"oneSwitch"`
+	Switches  []OneSwitch `xml:"oneSwitch"`
 }
 
-// newBlobVector
+// NewBlobVector
 // Commands to inform Device of new target values for a Property. After sending, the Client must set
 // its local state for the Property to Busy, leaving it up to the Device to change it when it sees
 // fit.
-type newBlobVector struct {
+type NewBlobVector struct {
 	XMLName   xml.Name  `xml:"newBLOBVector"`
 	Device    string    `xml:"device,attr"`
 	Name      string    `xml:"name,attr"`
 	Timestamp string    `xml:"timestamp,attr,omitempty"`
-	Blobs     []oneBlob `xml:"oneBLOB"`
+	Blobs     []OneBlob `xml:"oneBLOB"`
 }
 
-// oneText
+// OneText
 // One member of a Text vector.
-type oneText struct {
+type OneText struct {
 	XMLName xml.Name `xml:"oneText"`
 	Name    string   `xml:"name,attr"`
 	Value   string   `xml:",chardata"`
 }
 
-// oneNumber
+// OneNumber
 // One member of a Number vector.
-type oneNumber struct {
+type OneNumber struct {
 	XMLName xml.Name `xml:"oneNumber"`
 	Name    string   `xml:"name,attr"`
 	Value   string   `xml:",chardata"`
 }
 
-// oneSwitch
+// OneSwitch
 // One member of a switch vector.
-type oneSwitch struct {
+type OneSwitch struct {
 	XMLName xml.Name    `xml:"oneSwitch"`
 	Name    string      `xml:"name,attr"`
 	Value   SwitchState `xml:",chardata"`
 }
 
-// oneBlob
+// OneBlob
 // One member of a BLOB vector. The contents of this element must always be encoded using base64.
 // The format attribute consists of one or more file name suffixes, each preceded with a period,
 // which indicate how the decoded data is to be interpreted. For example .fits indicates the decoded
@@ -235,7 +235,7 @@ type oneSwitch struct {
 // attribute is the number of bytes in the FITS file. A Client unfamiliar with the specified format
 // may use the attribute as a simple string, perhaps in combination with the timestamp attribute, to
 // create a file name in which to store the data without processing other than decoding the base64.
-type oneBlob struct {
+type OneBlob struct {
 	XMLName xml.Name `xml:"oneBLOB"`
 	Name    string   `xml:"name,attr"`
 	Size    int      `xml:"size,attr"`
@@ -243,17 +243,17 @@ type oneBlob struct {
 	Value   string   `xml:",chardata"`
 }
 
-// oneLight
+// OneLight
 // Send a message to specify state of one member of a Light vector
-type oneLight struct {
+type OneLight struct {
 	XMLName xml.Name      `xml:"oneLight"`
 	Name    string        `xml:"name,attr"`
 	Value   PropertyState `xml:",chardata"`
 }
 
-// setTextVector
+// SetTextVector
 // Send a new set of values for a Text vector, with optional new timeout, state and message.
-type setTextVector struct {
+type SetTextVector struct {
 	XMLName   xml.Name      `xml:"setTextVector"`
 	Device    string        `xml:"device,attr"`
 	Name      string        `xml:"name,attr"`
@@ -261,12 +261,12 @@ type setTextVector struct {
 	Timeout   int           `xml:"timeout,attr"`
 	Timestamp string        `xml:"timestamp,attr"`
 	Message   string        `xml:"message"`
-	Texts     []oneText     `xml:"oneText"`
+	Texts     []OneText     `xml:"oneText"`
 }
 
-// setNumberVector
+// SetNumberVector
 // Send a new set of values for a Number vector, with optional new timeout, state and message.
-type setNumberVector struct {
+type SetNumberVector struct {
 	XMLName   xml.Name      `xml:"setNumberVector"`
 	Device    string        `xml:"device,attr"`
 	Name      string        `xml:"name,attr"`
@@ -274,12 +274,12 @@ type setNumberVector struct {
 	Timeout   int           `xml:"timeout,attr"`
 	Timestamp string        `xml:"timestamp,attr"`
 	Message   string        `xml:"message"`
-	Numbers   []oneNumber   `xml:"oneNumber"`
+	Numbers   []OneNumber   `xml:"oneNumber"`
 }
 
-// setSwitchVector
+// SetSwitchVector
 // Send a new set of values for a Switch vector, with optional new timeout, state and message.
-type setSwitchVector struct {
+type SetSwitchVector struct {
 	XMLName   xml.Name      `xml:"setSwitchVector"`
 	Device    string        `xml:"device,attr"`
 	Name      string        `xml:"name,attr"`
@@ -287,24 +287,24 @@ type setSwitchVector struct {
 	Timeout   int           `xml:"timeout,attr"`
 	Timestamp string        `xml:"timestamp,attr"`
 	Message   string        `xml:"message"`
-	Switches  []oneSwitch   `xml:"oneSwitch"`
+	Switches  []OneSwitch   `xml:"oneSwitch"`
 }
 
-// setLightVector
+// SetLightVector
 // Send a new set of values for a Light vector, with optional new state and message.
-type setLightVector struct {
+type SetLightVector struct {
 	XMLName   xml.Name      `xml:"setLightVector"`
 	Device    string        `xml:"device,attr"`
 	Name      string        `xml:"name,attr"`
 	State     PropertyState `xml:"state,attr"`
 	Timestamp string        `xml:"timestamp,attr"`
 	Message   string        `xml:"message"`
-	Lights    []oneLight    `xml:"oneLight"`
+	Lights    []OneLight    `xml:"oneLight"`
 }
 
-// setBlobVector
+// SetBlobVector
 // Send a new set of values for a BLOB vector, with optional new timeout, state and message.
-type setBlobVector struct {
+type SetBlobVector struct {
 	XMLName   xml.Name      `xml:"setBLOBVector"`
 	Device    string        `xml:"device,attr"`
 	Name      string        `xml:"name,attr"`
@@ -312,21 +312,21 @@ type setBlobVector struct {
 	Timeout   int           `xml:"timeout,attr"`
 	Timestamp string        `xml:"timestamp,attr"`
 	Message   string        `xml:"message"`
-	Blobs     []oneBlob     `xml:"oneBLOB"`
+	Blobs     []OneBlob     `xml:"oneBLOB"`
 }
 
-// message
+// Message
 // Send a message associated with a device or entire system.
-type message struct {
+type Message struct {
 	XMLName   xml.Name `xml:"message"`
 	Device    string   `xml:"device,attr"`
 	Timestamp string   `xml:"timestamp,attr"`
 	Message   string   `xml:"message,attr"`
 }
 
-// delProperty
+// DelProperty
 // Delete the given property, or entire device if no property is specified.
-type delProperty struct {
+type DelProperty struct {
 	XMLName   xml.Name `xml:"delProperty"`
 	Device    string   `xml:"device,attr"`
 	Name      string   `xml:"name,attr"`

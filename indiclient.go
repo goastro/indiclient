@@ -160,7 +160,7 @@ func (c *INDIClient) Connect(network, address string) error {
 	}
 
 	// Clear out all devices
-	c.delProperty(&delProperty{})
+	c.delProperty(&DelProperty{})
 
 	c.conn = conn
 
@@ -176,7 +176,7 @@ func (c *INDIClient) Connect(network, address string) error {
 // Disconnect clears out all devices from memory, closes the connection, and closes the read and write channels.
 func (c *INDIClient) Disconnect() error {
 	// Clear out all devices
-	c.delProperty(&delProperty{})
+	c.delProperty(&DelProperty{})
 
 	if c.conn == nil {
 		return nil
@@ -335,7 +335,7 @@ func (c *INDIClient) GetProperties(deviceName, propName string) error {
 		return ErrPropertyWithoutDevice
 	}
 
-	cmd := getProperties{
+	cmd := GetProperties{
 		Version: "1.7",
 		Device:  deviceName,
 		Name:    propName,
@@ -359,7 +359,7 @@ func (c *INDIClient) EnableBlob(deviceName, propName string, val BlobEnable) err
 		return err
 	}
 
-	cmd := enableBlob{
+	cmd := EnableBlob{
 		Device: deviceName,
 		Name:   propName,
 		Value:  val,
@@ -397,10 +397,10 @@ func (c *INDIClient) SetTextValue(deviceName, propName, textName, textValue stri
 
 	c.devices.Store(deviceName, device)
 
-	cmd := newTextVector{
+	cmd := NewTextVector{
 		Device: deviceName,
 		Name:   propName,
-		Texts: []oneText{
+		Texts: []OneText{
 			{
 				Name:  textName,
 				Value: textValue,
@@ -440,10 +440,10 @@ func (c *INDIClient) SetNumberValue(deviceName, propName, NumberName, NumberValu
 
 	c.devices.Store(deviceName, device)
 
-	cmd := newNumberVector{
+	cmd := NewNumberVector{
 		Device: deviceName,
 		Name:   propName,
-		Numbers: []oneNumber{
+		Numbers: []OneNumber{
 			{
 				Name:  NumberName,
 				Value: NumberValue,
@@ -485,10 +485,10 @@ func (c *INDIClient) SetSwitchValue(deviceName, propName, switchName string, swi
 
 	c.devices.Store(deviceName, device)
 
-	cmd := newSwitchVector{
+	cmd := NewSwitchVector{
 		Device: deviceName,
 		Name:   propName,
-		Switches: []oneSwitch{
+		Switches: []OneSwitch{
 			{
 				Name:  switchName,
 				Value: switchValue,
@@ -528,10 +528,10 @@ func (c *INDIClient) SetBlobValue(deviceName, propName, blobName, blobValue, blo
 
 	c.devices.Store(deviceName, device)
 
-	cmd := newBlobVector{
+	cmd := NewBlobVector{
 		Device: deviceName,
 		Name:   propName,
-		Blobs: []oneBlob{
+		Blobs: []OneBlob{
 			{
 				Name:   blobName,
 				Value:  blobValue,
@@ -571,21 +571,21 @@ func (c *INDIClient) findOrCreateDevice(name string) Device {
 }
 
 type indiMessageHandler interface {
-	defTextVector(item *defTextVector)
-	defSwitchVector(item *defSwitchVector)
-	defNumberVector(item *defNumberVector)
-	defLightVector(item *defLightVector)
-	defBlobVector(item *defBlobVector)
-	setSwitchVector(item *setSwitchVector)
-	setTextVector(item *setTextVector)
-	setNumberVector(item *setNumberVector)
-	setLightVector(item *setLightVector)
-	setBlobVector(item *setBlobVector)
-	message(item *message)
-	delProperty(item *delProperty)
+	defTextVector(item *DefTextVector)
+	defSwitchVector(item *DefSwitchVector)
+	defNumberVector(item *DefNumberVector)
+	defLightVector(item *DefLightVector)
+	defBlobVector(item *DefBlobVector)
+	setSwitchVector(item *SetSwitchVector)
+	setTextVector(item *SetTextVector)
+	setNumberVector(item *SetNumberVector)
+	setLightVector(item *SetLightVector)
+	setBlobVector(item *SetBlobVector)
+	message(item *Message)
+	delProperty(item *DelProperty)
 }
 
-func (c *INDIClient) defTextVector(item *defTextVector) {
+func (c *INDIClient) defTextVector(item *DefTextVector) {
 	device := c.findOrCreateDevice(item.Device)
 
 	prop := TextProperty{
@@ -596,7 +596,7 @@ func (c *INDIClient) defTextVector(item *defTextVector) {
 		State:       item.State,
 		Values:      map[string]TextValue{},
 		LastUpdated: time.Now(),
-		Messages:    []Message{},
+		Messages:    []MessageJSON{},
 	}
 
 	for _, val := range item.Texts {
@@ -608,7 +608,7 @@ func (c *INDIClient) defTextVector(item *defTextVector) {
 	}
 
 	if len(item.Message) > 0 {
-		prop.Messages = append(prop.Messages, Message{
+		prop.Messages = append(prop.Messages, MessageJSON{
 			Message:   item.Message,
 			Timestamp: time.Now(),
 		})
@@ -619,7 +619,7 @@ func (c *INDIClient) defTextVector(item *defTextVector) {
 	c.devices.Store(item.Device, device)
 }
 
-func (c *INDIClient) defSwitchVector(item *defSwitchVector) {
+func (c *INDIClient) defSwitchVector(item *DefSwitchVector) {
 	device := c.findOrCreateDevice(item.Device)
 
 	prop := SwitchProperty{
@@ -631,7 +631,7 @@ func (c *INDIClient) defSwitchVector(item *defSwitchVector) {
 		State:       item.State,
 		Values:      map[string]SwitchValue{},
 		LastUpdated: time.Now(),
-		Messages:    []Message{},
+		Messages:    []MessageJSON{},
 	}
 
 	for _, val := range item.Switches {
@@ -643,7 +643,7 @@ func (c *INDIClient) defSwitchVector(item *defSwitchVector) {
 	}
 
 	if len(item.Message) > 0 {
-		prop.Messages = append(prop.Messages, Message{
+		prop.Messages = append(prop.Messages, MessageJSON{
 			Message:   item.Message,
 			Timestamp: time.Now(),
 		})
@@ -654,7 +654,7 @@ func (c *INDIClient) defSwitchVector(item *defSwitchVector) {
 	c.devices.Store(item.Device, device)
 }
 
-func (c *INDIClient) defNumberVector(item *defNumberVector) {
+func (c *INDIClient) defNumberVector(item *DefNumberVector) {
 	device := c.findOrCreateDevice(item.Device)
 
 	prop := NumberProperty{
@@ -665,7 +665,7 @@ func (c *INDIClient) defNumberVector(item *defNumberVector) {
 		State:       item.State,
 		Values:      map[string]NumberValue{},
 		LastUpdated: time.Now(),
-		Messages:    []Message{},
+		Messages:    []MessageJSON{},
 	}
 
 	for _, val := range item.Numbers {
@@ -681,7 +681,7 @@ func (c *INDIClient) defNumberVector(item *defNumberVector) {
 	}
 
 	if len(item.Message) > 0 {
-		prop.Messages = append(prop.Messages, Message{
+		prop.Messages = append(prop.Messages, MessageJSON{
 			Message:   item.Message,
 			Timestamp: time.Now(),
 		})
@@ -692,7 +692,7 @@ func (c *INDIClient) defNumberVector(item *defNumberVector) {
 	c.devices.Store(item.Device, device)
 }
 
-func (c *INDIClient) defLightVector(item *defLightVector) {
+func (c *INDIClient) defLightVector(item *DefLightVector) {
 	device := c.findOrCreateDevice(item.Device)
 
 	prop := LightProperty{
@@ -702,7 +702,7 @@ func (c *INDIClient) defLightVector(item *defLightVector) {
 		State:       item.State,
 		Values:      map[string]LightValue{},
 		LastUpdated: time.Now(),
-		Messages:    []Message{},
+		Messages:    []MessageJSON{},
 	}
 
 	for _, val := range item.Lights {
@@ -714,7 +714,7 @@ func (c *INDIClient) defLightVector(item *defLightVector) {
 	}
 
 	if len(item.Message) > 0 {
-		prop.Messages = append(prop.Messages, Message{
+		prop.Messages = append(prop.Messages, MessageJSON{
 			Message:   item.Message,
 			Timestamp: time.Now(),
 		})
@@ -725,7 +725,7 @@ func (c *INDIClient) defLightVector(item *defLightVector) {
 	c.devices.Store(item.Device, device)
 }
 
-func (c *INDIClient) defBlobVector(item *defBlobVector) {
+func (c *INDIClient) defBlobVector(item *DefBlobVector) {
 	device := c.findOrCreateDevice(item.Device)
 
 	prop := BlobProperty{
@@ -735,7 +735,7 @@ func (c *INDIClient) defBlobVector(item *defBlobVector) {
 		State:       item.State,
 		Values:      map[string]BlobValue{},
 		LastUpdated: time.Now(),
-		Messages:    []Message{},
+		Messages:    []MessageJSON{},
 	}
 
 	for _, val := range item.Blobs {
@@ -746,7 +746,7 @@ func (c *INDIClient) defBlobVector(item *defBlobVector) {
 	}
 
 	if len(item.Message) > 0 {
-		prop.Messages = append(prop.Messages, Message{
+		prop.Messages = append(prop.Messages, MessageJSON{
 			Message:   item.Message,
 			Timestamp: time.Now(),
 		})
@@ -757,7 +757,7 @@ func (c *INDIClient) defBlobVector(item *defBlobVector) {
 	c.devices.Store(item.Device, device)
 }
 
-func (c *INDIClient) setSwitchVector(item *setSwitchVector) {
+func (c *INDIClient) setSwitchVector(item *SetSwitchVector) {
 	device, err := c.findDevice(item.Device)
 	if err != nil {
 		c.log.WithField("device", item.Device).WithError(err).Warn("could not find device")
@@ -799,7 +799,7 @@ func (c *INDIClient) setSwitchVector(item *setSwitchVector) {
 	}
 
 	if len(item.Message) > 0 {
-		prop.Messages = append(prop.Messages, Message{
+		prop.Messages = append(prop.Messages, MessageJSON{
 			Message:   item.Message,
 			Timestamp: time.Now(),
 		})
@@ -810,7 +810,7 @@ func (c *INDIClient) setSwitchVector(item *setSwitchVector) {
 	c.devices.Store(item.Device, device)
 }
 
-func (c *INDIClient) setTextVector(item *setTextVector) {
+func (c *INDIClient) setTextVector(item *SetTextVector) {
 	device, err := c.findDevice(item.Device)
 	if err != nil {
 		c.log.WithField("device", item.Device).WithError(err).Warn("could not find device")
@@ -852,7 +852,7 @@ func (c *INDIClient) setTextVector(item *setTextVector) {
 	}
 
 	if len(item.Message) > 0 {
-		prop.Messages = append(prop.Messages, Message{
+		prop.Messages = append(prop.Messages, MessageJSON{
 			Message:   item.Message,
 			Timestamp: time.Now(),
 		})
@@ -863,7 +863,7 @@ func (c *INDIClient) setTextVector(item *setTextVector) {
 	c.devices.Store(item.Device, device)
 }
 
-func (c *INDIClient) setNumberVector(item *setNumberVector) {
+func (c *INDIClient) setNumberVector(item *SetNumberVector) {
 	device, err := c.findDevice(item.Device)
 	if err != nil {
 		c.log.WithField("device", item.Device).WithError(err).Warn("could not find device")
@@ -905,7 +905,7 @@ func (c *INDIClient) setNumberVector(item *setNumberVector) {
 	}
 
 	if len(item.Message) > 0 {
-		prop.Messages = append(prop.Messages, Message{
+		prop.Messages = append(prop.Messages, MessageJSON{
 			Message:   item.Message,
 			Timestamp: time.Now(),
 		})
@@ -916,7 +916,7 @@ func (c *INDIClient) setNumberVector(item *setNumberVector) {
 	c.devices.Store(item.Device, device)
 }
 
-func (c *INDIClient) setLightVector(item *setLightVector) {
+func (c *INDIClient) setLightVector(item *SetLightVector) {
 	device, err := c.findDevice(item.Device)
 	if err != nil {
 		c.log.WithField("device", item.Device).WithError(err).Warn("could not find device")
@@ -957,7 +957,7 @@ func (c *INDIClient) setLightVector(item *setLightVector) {
 	}
 
 	if len(item.Message) > 0 {
-		prop.Messages = append(prop.Messages, Message{
+		prop.Messages = append(prop.Messages, MessageJSON{
 			Message:   item.Message,
 			Timestamp: time.Now(),
 		})
@@ -968,7 +968,7 @@ func (c *INDIClient) setLightVector(item *setLightVector) {
 	c.devices.Store(item.Device, device)
 }
 
-func (c *INDIClient) setBlobVector(item *setBlobVector) {
+func (c *INDIClient) setBlobVector(item *SetBlobVector) {
 	device, err := c.findDevice(item.Device)
 	if err != nil {
 		c.log.WithField("device", item.Device).WithError(err).Warn("could not find device")
@@ -1044,7 +1044,7 @@ func (c *INDIClient) setBlobVector(item *setBlobVector) {
 	}
 
 	if len(item.Message) > 0 {
-		prop.Messages = append(prop.Messages, Message{
+		prop.Messages = append(prop.Messages, MessageJSON{
 			Message:   item.Message,
 			Timestamp: time.Now(),
 		})
@@ -1055,14 +1055,14 @@ func (c *INDIClient) setBlobVector(item *setBlobVector) {
 	c.devices.Store(item.Device, device)
 }
 
-func (c *INDIClient) message(item *message) {
+func (c *INDIClient) message(item *Message) {
 	device, err := c.findDevice(item.Device)
 	if err != nil {
 		c.log.WithField("device", item.Device).WithError(err).Warn("could not find device")
 		return
 	}
 
-	device.Messages = append(device.Messages, Message{
+	device.Messages = append(device.Messages, MessageJSON{
 		Message:   item.Message,
 		Timestamp: time.Now(),
 	})
@@ -1070,7 +1070,7 @@ func (c *INDIClient) message(item *message) {
 	c.devices.Store(item.Device, device)
 }
 
-func (c *INDIClient) delProperty(item *delProperty) {
+func (c *INDIClient) delProperty(item *DelProperty) {
 	if len(item.Device) == 0 {
 		c.devices.Range(func(key, value interface{}) bool {
 			c.devices.Delete(key)
@@ -1102,29 +1102,29 @@ func (c *INDIClient) startRead() {
 			log.WithField("item", i).Debug("got message")
 
 			switch item := i.(type) {
-			case *defTextVector:
+			case *DefTextVector:
 				handler.defTextVector(item)
-			case *defSwitchVector:
+			case *DefSwitchVector:
 				handler.defSwitchVector(item)
-			case *defNumberVector:
+			case *DefNumberVector:
 				handler.defNumberVector(item)
-			case *defLightVector:
+			case *DefLightVector:
 				handler.defLightVector(item)
-			case *defBlobVector:
+			case *DefBlobVector:
 				handler.defBlobVector(item)
-			case *setSwitchVector:
+			case *SetSwitchVector:
 				handler.setSwitchVector(item)
-			case *setTextVector:
+			case *SetTextVector:
 				handler.setTextVector(item)
-			case *setNumberVector:
+			case *SetNumberVector:
 				handler.setNumberVector(item)
-			case *setLightVector:
+			case *SetLightVector:
 				handler.setLightVector(item)
-			case *setBlobVector:
+			case *SetBlobVector:
 				handler.setBlobVector(item)
-			case *message:
+			case *Message:
 				handler.message(item)
-			case *delProperty:
+			case *DelProperty:
 				handler.delProperty(item)
 			default:
 				log.WithField("type", fmt.Sprintf("%T", item)).Warn("unknown type")
@@ -1163,29 +1163,29 @@ func (c *INDIClient) startRead() {
 				inElement = se.Name.Local
 				switch inElement {
 				case "defSwitchVector":
-					inner = &defSwitchVector{}
+					inner = &DefSwitchVector{}
 				case "defTextVector":
-					inner = &defTextVector{}
+					inner = &DefTextVector{}
 				case "defNumberVector":
-					inner = &defNumberVector{}
+					inner = &DefNumberVector{}
 				case "defLightVector":
-					inner = &defLightVector{}
+					inner = &DefLightVector{}
 				case "defBLOBVector":
-					inner = &defBlobVector{}
+					inner = &DefBlobVector{}
 				case "setSwitchVector":
-					inner = &setSwitchVector{}
+					inner = &SetSwitchVector{}
 				case "setTextVector":
-					inner = &setTextVector{}
+					inner = &SetTextVector{}
 				case "setNumberVector":
-					inner = &setNumberVector{}
+					inner = &SetNumberVector{}
 				case "setLightVector":
-					inner = &setLightVector{}
+					inner = &SetLightVector{}
 				case "setBLOBVector":
-					inner = &setBlobVector{}
+					inner = &SetBlobVector{}
 				case "message":
-					inner = &message{}
+					inner = &Message{}
 				case "delProperty":
-					inner = &delProperty{}
+					inner = &DelProperty{}
 				default:
 					log.WithField("element", inElement).Error("unknown element")
 				}

@@ -13,11 +13,11 @@ type Device struct {
 	NumberProperties map[string]NumberProperty `json:"numberProperties"`
 	BlobProperties   map[string]BlobProperty   `json:"blobProperties"`
 	LightProperties  map[string]LightProperty  `json:"lightProperties"`
-	Messages         []Message                 `json:"messages"`
+	Messages         []MessageJSON             `json:"messages"`
 }
 
-// Message is a message received from indiserver.
-type Message struct {
+// MessageJSON is a message received from indiserver.
+type MessageJSON struct {
 	Timestamp time.Time `json:"timestamp"`
 	Message   string    `json:"message"`
 }
@@ -30,7 +30,7 @@ type TextProperty struct {
 	State       PropertyState        `json:"state"`
 	Timeout     int                  `json:"timeout"`
 	LastUpdated time.Time            `json:"lastUpdated"`
-	Messages    []Message            `json:"messages"`
+	Messages    []MessageJSON        `json:"messages"`
 	Permissions PropertyPermission   `json:"permissions"`
 	Values      map[string]TextValue `json:"values"`
 }
@@ -50,7 +50,7 @@ type SwitchProperty struct {
 	State       PropertyState          `json:"state"`
 	Timeout     int                    `json:"timeout"`
 	LastUpdated time.Time              `json:"lastUpdated"`
-	Messages    []Message              `json:"messages"`
+	Messages    []MessageJSON          `json:"messages"`
 	Rule        SwitchRule             `json:"rule"`
 	Permissions PropertyPermission     `json:"permissions"`
 	Values      map[string]SwitchValue `json:"values"`
@@ -71,7 +71,7 @@ type NumberProperty struct {
 	State       PropertyState          `json:"state"`
 	Timeout     int                    `json:"timeout"`
 	LastUpdated time.Time              `json:"lastUpdated"`
-	Messages    []Message              `json:"messages"`
+	Messages    []MessageJSON          `json:"messages"`
 	Permissions PropertyPermission     `json:"permissions"`
 	Values      map[string]NumberValue `json:"values"`
 }
@@ -94,7 +94,7 @@ type LightProperty struct {
 	Group       string                `json:"group"`
 	State       PropertyState         `json:"state"`
 	LastUpdated time.Time             `json:"lastUpdated"`
-	Messages    []Message             `json:"messages"`
+	Messages    []MessageJSON         `json:"messages"`
 	Values      map[string]LightValue `json:"values"`
 }
 
@@ -112,7 +112,7 @@ type BlobProperty struct {
 	Group       string               `json:"group"`
 	State       PropertyState        `json:"state"`
 	LastUpdated time.Time            `json:"lastUpdated"`
-	Messages    []Message            `json:"messages"`
+	Messages    []MessageJSON        `json:"messages"`
 	Permissions PropertyPermission   `json:"permissions"`
 	Timeout     int                  `json:"timeout"`
 	Values      map[string]BlobValue `json:"values"`
